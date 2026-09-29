@@ -1,0 +1,8 @@
+build/
+build-tests/
+*.o
+*.d
+*.elf
+*.bin
+compile_commands.json
+.vscode/

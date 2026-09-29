@@ -1,0 +1,17 @@
+// Renode platform description for this project: a bare Cortex-A15 core
+// plus a single PL011 UART, matching linker.ld's RAM layout (0x40000000,
+// 128M) and QEMU virt's UART0 address (0x09000000, same as UART0_BASE in
+// PL011_config.h). No interrupt controller is wired up - this is a
+// polled driver, nothing here ever needs to assert an IRQ.
+//
+// Renode ships a real (not stub) PL011 model - unlike QEMU's, it actually
+// enforces UARTEN/baud/frame-format state instead of working regardless
+// of what the driver writes.
+
+cpu: CPU.ARMv7A @ sysbus
+    cpuType: "cortex-a15"
+
+memory: Memory.MappedMemory @ sysbus 0x40000000
+    size: 0x08000000
+
+uart0: UART.PL011 @ sysbus 0x09000000

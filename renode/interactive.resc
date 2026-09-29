@@ -1,0 +1,17 @@
+# Interactive UART session. Exposes uart0 on TCP port 3456 so an external
+# terminal can attach: what you type is delivered to the guest's RX, what the
+# guest transmits comes back. Pair this with the echo loop at the end of main.c.
+#
+#   Terminal 1:  renode --disable-gui --console -e "s @renode/interactive.resc"
+#   Terminal 2:  telnet 127.0.0.1 3456      (or: nc 127.0.0.1 3456)
+#
+# Then type in terminal 2 and watch each character echo back.
+
+mach create "uart"
+machine LoadPlatformDescription @renode/renode_platform.repl
+sysbus LoadELF @build/pl011.elf
+
+emulation CreateServerSocketTerminal 3456 "term"
+connector Connect sysbus.uart0 term
+
+start

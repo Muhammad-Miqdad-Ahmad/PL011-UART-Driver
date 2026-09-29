@@ -1,0 +1,23 @@
+# Loads the platform + firmware, arms a hook on checkpoint(address), and
+# starts it, dropping into the interactive monitor afterward.
+#
+# checkpoint(name, address) in main.c is an empty marker function -- call it
+# with a label and whatever address you want inspected at that point in your
+# code. Per the ARM calling convention the first argument (the label string
+# pointer) is in R0 and the second (the address) is in R1. The hook reads the
+# NUL-terminated label out of memory, reads the 32-bit word at the address,
+# and prints "<label> = 0x<value>".
+
+mach create "uart"
+machine LoadPlatformDescription @renode/renode_platform.repl
+sysbus LoadELF @build/pl011.elf
+sysbus.cpu AddSymbolHook "checkpoint" "p=self.GetRegister(0).RawValue; a=self.GetRegister(1).RawValue; name=''.join(chr(machine.SystemBus.ReadByte(p+i)) for i in range(32)).split(chr(0))[0]; print('%s = 0x%x' % (name, machine.SystemBus.ReadDoubleWord(a)))"
+
+# When the guest reaches inject_point(), push 'A' (0x41) into uart0's RX FIFO,
+# simulating a received byte. The read that follows in main.c pops it back.
+sysbus.cpu AddSymbolHook "inject_point" "machine['sysbus.uart0'].WriteChar(0x41)"
+
+# Show everything the UART transmits. Headless (--console): TX prints to the
+# console as "uart0: ... <text>". With the GUI: opens a live terminal window.
+showAnalyzer sysbus.uart0
+start
