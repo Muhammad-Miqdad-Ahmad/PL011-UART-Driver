@@ -47,6 +47,5 @@ CR).
 
 ## Docs
 
-- [`WRITING_A_DRIVER.md`](WRITING_A_DRIVER.md) — how to read an IP datasheet and structure a driver
 - [`regs.md`](regs.md) — PL011 register notes
 - [`renode.md`](renode.md) — getting a bare-metal project running in Renode from scratch

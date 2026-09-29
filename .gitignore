@@ -6,3 +6,4 @@ build-tests/
 *.bin
 compile_commands.json
 .vscode/
+WRITING_A_DRIVER.md
